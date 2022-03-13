@@ -7,7 +7,7 @@
   <mva:VisualBasic.Settings>
     <x:Null />
   </mva:VisualBasic.Settings>
-  <sap:VirtualizedContainerService.HintSize>1848,5566</sap:VirtualizedContainerService.HintSize>
+  <sap:VirtualizedContainerService.HintSize>902,5566</sap:VirtualizedContainerService.HintSize>
   <sap2010:WorkflowViewState.IdRef>DesperateMode_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <scg:List x:TypeArguments="x:String" Capacity="35">
@@ -80,17 +80,13 @@
       <AssemblyReference>System.ValueTuple</AssemblyReference>
       <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
       <AssemblyReference>UiPath.Excel</AssemblyReference>
-      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="DesperateMode" sap:VirtualizedContainerService.HintSize="912,5501" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:Boolean" Name="giveUp">
-        <Variable.Default>
-          <Literal x:TypeArguments="x:Boolean" />
-        </Variable.Default>
-      </Variable>
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="giveUp" />
       <Variable x:TypeArguments="x:Boolean" Name="matchFound" />
       <Variable x:TypeArguments="x:Int32" Name="maxTry" />
       <Variable x:TypeArguments="x:Int32" Name="tryCounter" />
@@ -122,7 +118,7 @@
         </scg:List>
       </ui:MultipleAssign.AssignOperations>
     </ui:MultipleAssign>
-    <ui:InterruptibleDoWhile DisplayName="Do While" sap:VirtualizedContainerService.HintSize="870,5238" sap2010:WorkflowViewState.IdRef="InterruptibleDoWhile_1">
+    <ui:InterruptibleDoWhile Condition="[(Not giveUp) and (tryCounter&lt;maxTry)]" DisplayName="Do While" sap:VirtualizedContainerService.HintSize="870,5238" sap2010:WorkflowViewState.IdRef="InterruptibleDoWhile_1">
       <ui:InterruptibleDoWhile.Body>
         <Sequence sap:VirtualizedContainerService.HintSize="834,5073" sap2010:WorkflowViewState.IdRef="Sequence_13">
           <Sequence.Variables>
@@ -215,7 +211,7 @@
                               </scg:List>
                             </ui:MultipleAssign.AssignOperations>
                           </ui:MultipleAssign>
-                          <ui:InterruptibleWhile DisplayName="While - Flip" sap:VirtualizedContainerService.HintSize="640,2834" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_1">
+                          <ui:InterruptibleWhile Condition="[(Not matchFound) AndAlso (flipCounter &lt; cint(CurrentRow(&quot;maxflip&quot;)))]" DisplayName="While - Flip" sap:VirtualizedContainerService.HintSize="640,2834" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_1">
                             <ui:InterruptibleWhile.Body>
                               <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="604,2669" sap2010:WorkflowViewState.IdRef="Sequence_2">
                                 <sap:WorkflowViewStateService.ViewState>
@@ -238,7 +234,7 @@
                                     </scg:List>
                                   </ui:MultipleAssign.AssignOperations>
                                 </ui:MultipleAssign>
-                                <ui:InterruptibleWhile DisplayName="While - Rotate Right" sap:VirtualizedContainerService.HintSize="562,1955" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_2">
+                                <ui:InterruptibleWhile Condition="[(Not matchFound) andAlso (rotateCounter &lt; cint(CurrentRow(&quot;maxrotate&quot;)))]" DisplayName="While - Rotate Right" sap:VirtualizedContainerService.HintSize="562,1955" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_2">
                                   <ui:InterruptibleWhile.Body>
                                     <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="526,1790" sap2010:WorkflowViewState.IdRef="Sequence_4">
                                       <sap:WorkflowViewStateService.ViewState>
@@ -313,7 +309,7 @@
                                           <InArgument x:TypeArguments="x:Int32">[rotateCounter + 1]</InArgument>
                                         </Assign.Value>
                                       </Assign>
-                                      <If Condition="[(flipCounter &lt; cint(CurrentRow(&quot;maxflip&quot;)))]" sap:VirtualizedContainerService.HintSize="484,342" sap2010:WorkflowViewState.IdRef="If_5">
+                                      <If Condition="[(rotateCounter &lt; cint(CurrentRow(&quot;maxrotate&quot;)))]" sap:VirtualizedContainerService.HintSize="484,342" sap2010:WorkflowViewState.IdRef="If_5">
                                         <If.Then>
                                           <uix:NClick ClickType="Single" DisplayName="Rotate Right" sap:VirtualizedContainerService.HintSize="334,156" sap2010:WorkflowViewState.IdRef="NClick_3" KeyModifiers="None" MouseButton="Left" ScopeIdentifier="f93e983f-b7fb-4de7-8881-aaf40807ce5e" Timeout="1">
                                             <uix:NClick.Target>
@@ -337,9 +333,6 @@
                                       </If>
                                     </Sequence>
                                   </ui:InterruptibleWhile.Body>
-                                  <ui:InterruptibleWhile.Condition>
-                                    <mva:VisualBasicValue x:TypeArguments="x:Boolean" ExpressionText="(Not matchFound) andAlso (rotateCounter &lt; cint(CurrentRow(&quot;maxrotate&quot;)))" />
-                                  </ui:InterruptibleWhile.Condition>
                                   <sap:WorkflowViewStateService.ViewState>
                                     <scg:Dictionary x:TypeArguments="x:String, x:Object">
                                       <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -379,9 +372,6 @@
                                 </If>
                               </Sequence>
                             </ui:InterruptibleWhile.Body>
-                            <ui:InterruptibleWhile.Condition>
-                              <mva:VisualBasicValue x:TypeArguments="x:Boolean" ExpressionText="(Not matchFound) AndAlso (flipCounter &lt; cint(CurrentRow(&quot;maxflip&quot;)))" />
-                            </ui:InterruptibleWhile.Condition>
                             <sap:WorkflowViewStateService.ViewState>
                               <scg:Dictionary x:TypeArguments="x:String, x:Object">
                                 <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -471,9 +461,6 @@
           </If>
         </Sequence>
       </ui:InterruptibleDoWhile.Body>
-      <ui:InterruptibleDoWhile.Condition>
-        <mva:VisualBasicValue x:TypeArguments="x:Boolean" ExpressionText="(Not giveUp) and (tryCounter&lt;maxTry)" />
-      </ui:InterruptibleDoWhile.Condition>
       <sap:WorkflowViewStateService.ViewState>
         <scg:Dictionary x:TypeArguments="x:String, x:Object">
           <x:Boolean x:Key="IsExpanded">True</x:Boolean>
